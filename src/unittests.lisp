@@ -76,6 +76,8 @@
 (deftestsuite xarray-ut-slice (xarray-ut) ())
 (deftestsuite xarray-ut-take  (xarray-ut) ())
 
+(deftestsuite xarray-ut-lol  (xarray-ut) ()) ; for list-of-list coherency
+
 ;; Initial set of tests done on the interface to native lisp ARRAY
 ;; data structure. 
 
@@ -190,6 +192,7 @@
 #|
  (run-tests :suite 'xarray-ut)
  ; => #<Results for XARRAY-UT 13 Tests, 0 Failures, 0 Error>
+ ; => #<Results for XARRAY-UT [13 Successful tests]>
 
  (describe (run-tests :suite 'xarray-ut))
 
