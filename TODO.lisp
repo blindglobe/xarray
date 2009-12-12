@@ -19,6 +19,10 @@
 ;; fits into the theme of rapid prototyping (slow exec) with rapid
 ;; execution (post-proto...).
 
+;; Current thinking on the above, is to stick them into separate
+;; packages.  In particular, I've factored out the listoflist package
+;; into its own package.
+
 ;;; Checking current test state
 
 (in-package :xarray-ut)
