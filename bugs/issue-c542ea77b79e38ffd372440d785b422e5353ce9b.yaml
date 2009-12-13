@@ -7,8 +7,8 @@ type: :feature
 component: xarray.git
 release: 
 reporter: tony <blindglobe@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-07-22 06:26:13.155801 Z
 references: []
 
@@ -18,3 +18,7 @@ log_events:
   - tony <blindglobe@gmail.com>
   - created
   - For consideration
+- - 2009-12-13 17:14:01.154535 Z
+  - tony <blindglobe@gmail.com>
+  - closed with disposition fixed
+  - Tamas modified xtype to be xeltype, and xtype is something else now
