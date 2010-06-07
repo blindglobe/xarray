@@ -1,29 +1,28 @@
 
+* Using this file
+  This README file was produced for processing by Emacs org-mode for
+  publishing, for literate-programming of examples, for bug-tracking
+  and task/issue management, etc.
+** TODO [#A] Write up basic description for using this file!
+   - State "TODO"       from ""           [2010-06-07 Mon 16:18]
 * Credits
-
   Original Idea and majority of work:  Tamas Papp
   Mucking, cleaning, simplifying: AJ Rossini
-
 * Overview
-
   This package implements a generalized interface for array-like
   objects.  An array-like object is any structure whose data (but not
   necessarily metadata) could be mappable to either a lisp array or a
   list-of-list structure.  The idea is that we should be able to index
   an object's data, but might not be able to access specialized
   metadata.   The primary generic function is: 
-
 #+begin_src
   (xref object #| 1 2 3 or other things that reference objects |# )
 #+end_src
-
   to retrieve or set an element.  This would be easy to do it aref was
-  a generic function, but it is not.  I describe a simple interface
-  with a few generic functions. 
-
-  Any objects that has these methods is called "xrefable".  For a
-  given datastructure, we must implement the following tools.  
-
+  a generic function, but it is not.  I (Tamas) describe a simple
+  interface with a few generic functions.  Any objects that has these
+  methods is called "xrefable".  For a given datastructure, we must
+  implement the following tools.
 ** XDIMS
    queries dimensions of structure
 #+begin_src common-lisp
@@ -41,7 +40,7 @@
    (xref object <ref>)
 #+end_src
    queries (sub)structure and returns views which can be accessed and
-   set.  The refere
+   set.  The reference <ref> manages to 
 ** XCOPY
 #+begin_src common-lisp
    (xcopy object <ref>)
@@ -165,60 +164,50 @@
   Corrupted by AJ Rossini <blindglobe@gmail.com>
 * Development in progress
   To use this from within org-mode/org-babel, C-c ' will put into
-  slime
+  slime / lisp editing mode
 #+begin_src common-lisp
   (in-package :cl-user)
   (asdf:oos 'asdf:compile-op 'xarray :force t)
   (asdf:oos 'asdf:load-op 'xarray)
   (asdf:oos 'asdf:load-op 'xarray-test)
 #+end_src
-
-  Tamas was thinking about this being a general interface, but then
-  included some specialized issues that probably should be considered
-  here but handled elsewhere.   THIS is precisely where I am deviating
-  in my further development of this.
+  Tamas was thinking about this being a general interface, but then in
+  my (Tony's) opinion, included some specialized issues that needed to
+  be considered here but handled elsewhere.  My limited understanding
+  had to do with practical considerations; I don't need to be
+  practical, and he does.  THIS is precisely where I am deviating in
+  my further development of this.
 
   What I (Tony) am currently thinking about is to pay a penalty
-  initially on speed of access and write a general interface using a
-  range of possible back-ends.  So that we can get the interface
-  clean: xref pulls out a value and puts it int an array of the same
-  structure, xref* pulls out a value and sticks it into a lisp array
-  or scalar and returns it.  Speed can be handled later by doing a
-  compile-time/run-time tradeoff, we will pay the compile-time
-  penalty, in exchange for run-time advantages.  This fits into the
-  theme of rapid prototyping (slow exec) with rapid execution
-  (post-proto...).
+  initially (and maybe for a while!) on speed of access and write a
+  general interface using a range of possible back-ends.  So that we
+  can get the interface clean: xref pulls out a value and puts it int
+  an array of the same structure, xref* pulls out a value and sticks
+  it into a lisp array or scalar and returns it.  Speed can be handled
+  later by doing a compile-time/run-time tradeoff, we will pay the
+  compile-time penalty, in exchange for run-time advantages.  This
+  fits into the theme of rapid prototyping (slow exec) with rapid
+  execution (post-proto...).
+
+  We'll optimize for version 2.  Ha-ha.
 
   Current thinking on the above, is to stick them into separate
-  packages.  In particular, I've factored out the listoflist package
-  into its own package.
+  packages.  In particular, I've factored out the listoflist
+  infrastructure into its own package.
 
-  Checking current test state
-
+  Checking current test state; but this is currently broken!
 #+begin_src common-lisp
-(in-package :xarray-ut)
-(run-tests :suite 'xarray-ut)
-;; => #<Results for XARRAY-UT 13 Tests, 0 Errors, 0 Failures>
-(describe (run-tests :suite 'xarray-ut))
+  (in-package :xarray-ut)
+  (run-tests :suite 'xarray-ut)
+  ;; => #<Results for XARRAY-UT 13 Tests, 0 Errors, 0 Failures>
+  (describe (run-tests :suite 'xarray-ut))
 #+end_src
 
 ** Development work and examples
-   
+   Here are any current trials that are undergoing development.
 #+begin_src
 (in-package :xarray-user)
-
-(progn
-;; test dev could go here
-      )
-
-;;; Alternative backend structures.
-#+nil 
-(progn
-  ;; Need to develop an interface to vectors and lists (and lists of
-  ;; lists -- but not vectors of vectors?) 
-  )
-
-;; or test dev could go here
+;; and dev code goes here.
 #+end_src
 
 * Disserata and Footnotes
