@@ -87,7 +87,6 @@
   they can use the interface (xref, xdims, etc) and not care where it
   is coming from.
 
-
   I have also implemented permutations (generalized transpose), and
   row-major projections.  If you want to collect the elements of a
   view in an array, use
@@ -161,11 +160,66 @@
    - State "TODO"       from ""           [2010-06-07 Mon 15:38]
 ** TODO [#B] implement equalp for XREF-able objects
    - State "TODO"       from ""           [2010-06-07 Mon 15:40]
-* Author
-
+* Authors
   Tamas K Papp <tkpapp@gmail.com>
-
   Corrupted by AJ Rossini <blindglobe@gmail.com>
+* Development in progress
+  To use this from within org-mode/org-babel, C-c ' will put into
+  slime
+#+begin_src common-lisp
+  (in-package :cl-user)
+  (asdf:oos 'asdf:compile-op 'xarray :force t)
+  (asdf:oos 'asdf:load-op 'xarray)
+  (asdf:oos 'asdf:load-op 'xarray-test)
+#+end_src
+
+  Tamas was thinking about this being a general interface, but then
+  included some specialized issues that probably should be considered
+  here but handled elsewhere.   THIS is precisely where I am deviating
+  in my further development of this.
+
+  What I (Tony) am currently thinking about is to pay a penalty
+  initially on speed of access and write a general interface using a
+  range of possible back-ends.  So that we can get the interface
+  clean: xref pulls out a value and puts it int an array of the same
+  structure, xref* pulls out a value and sticks it into a lisp array
+  or scalar and returns it.  Speed can be handled later by doing a
+  compile-time/run-time tradeoff, we will pay the compile-time
+  penalty, in exchange for run-time advantages.  This fits into the
+  theme of rapid prototyping (slow exec) with rapid execution
+  (post-proto...).
+
+  Current thinking on the above, is to stick them into separate
+  packages.  In particular, I've factored out the listoflist package
+  into its own package.
+
+  Checking current test state
+
+#+begin_src common-lisp
+(in-package :xarray-ut)
+(run-tests :suite 'xarray-ut)
+;; => #<Results for XARRAY-UT 13 Tests, 0 Errors, 0 Failures>
+(describe (run-tests :suite 'xarray-ut))
+#+end_src
+
+** Development work and examples
+   
+#+begin_src
+(in-package :xarray-user)
+
+(progn
+;; test dev could go here
+      )
+
+;;; Alternative backend structures.
+#+nil 
+(progn
+  ;; Need to develop an interface to vectors and lists (and lists of
+  ;; lists -- but not vectors of vectors?) 
+  )
+
+;; or test dev could go here
+#+end_src
 
 * Disserata and Footnotes
 
