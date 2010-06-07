@@ -80,14 +80,22 @@
 #+end_src
 
   to set element 2 to 9.  Changes will be made in the original array
-  *a*, since this is a view.  But for functions that just expect an
-  array, they can use the interface (xref, xdims, etc) and not care
-  where it is coming from.
+#+begin_src common-lisp
+  *a*
+#+end_src
+  since this is a view.  But for functions that just expect an array,
+  they can use the interface (xref, xdims, etc) and not care where it
+  is coming from.
 
 
   I have also implemented permutations (generalized transpose), and
   row-major projections.  If you want to collect the elements of a
-  view in an array, use (take object), which delivers a CL array.
+  view in an array, use
+#+begin_src common-lisp
+  (take object)
+#+end_src
+
+  which delivers a CL array.
 
   There are convenience functions that for easy array/vector creation,
   inspired by R:
@@ -102,39 +110,58 @@
 
 * Roadmap:
 
-** unit testing.  supremely important.
-
-** integrate linear algebra routines
+** TODO unit testing [0/5]
+   - State "TODO"       from ""           [2010-06-07 Mon 15:33]
+*** TODO [#B] XDIMS unittests
+    - State "TODO"       from ""           [2010-06-07 Mon 15:29]
+*** TODO [#B] XTYPE unittests
+    - State "TODO"       from ""           [2010-06-07 Mon 15:29]
+      
+*** TODO [#B] XREF unittests
+    - State "TODO"       from ""           [2010-06-07 Mon 15:29]
+      
+*** TODO [#B] XCOPY unittests
+    - State "TODO"       from ""           [2010-06-07 Mon 15:29]
+      
+*** TODO [#B] XNEW unittests
+    - State "TODO"       from ""           [2010-06-07 Mon 15:29]
+      
+** TODO [#A] integrate linear algebra routines
+   - State "TODO"       from ""           [2010-06-07 Mon 15:33]
    probably from GSLL?  It should
    be easy to rig an xrefable interface to GSLL arrays.
-
-** Specialized arrays
+** TODO [#B] Specialized arrays [0/2]
+   - State "TODO"       from ""           [2010-06-07 Mon 15:33]
    upper- and lower-triangular matrices, etc.  xrefable elements can
    be read-only, xref-writeable-p is an interface to test if an
    element is writeable, it was included specifically for this.
-
-   integrate sparse matrices from cl-sparsematrix.
-
-** specialized subclasses for certain cases and operations
+   In addition, integrate sparse matrices from cl-sparsematrix.
+*** TODO [#B] Triangular matrices
+    - State "TODO"       from ""           [2010-06-07 Mon 15:33]
+*** TODO [#B] Sparse matrices
+    - State "TODO"       from ""           [2010-06-07 Mon 15:33]
+** TODO [#B] specialized subclasses for certain cases and operations
+   - State "TODO"       from ""           [2010-06-07 Mon 15:34]
    eg views on matrices, a transpose-view would be much simpler (and
-   faster, maybe?) than the generalized permute.
-
-** decent printing for xrefable objects,
+   faster, maybe?) than the generalized permute.  Some operations (such as
+   outer products, multiplication, addition) could be highly optimized
+   when we know more about the specific structure (e.g. triangular,
+   only ones/zeros, etc...).
+** TODO [#B] decent printing for xrefable objects,
+   - State "TODO"       from ""           [2010-06-07 Mon 15:34]
    currently converted to array.
-
-** direct access from other systems
+** TODO [#B] direct access from other systems
+   - State "TODO"       from ""           [2010-06-07 Mon 15:34]
    certain views can be directly accommodated by LAPACK/GSLL (eg a
    matrix with a stride).  Minor possibility for speedup/memory
-   savings.
-
+   savings.  This is related to optimization based on substructure. 
 * Author
 
-Tamas K Papp
-tkpapp@gmail.com
+  Tamas K Papp <tkpapp@gmail.com>
 
-(and corrupted by AJ Rossini <blindglobe@gmail.com>
+  Corrupted by AJ Rossini <blindglobe@gmail.com>
 
 * Disserata and Footnotes
 
-[1] The slice interface is similar to Tamas' affi package, but now
-arbitrary index vectors are allowed, much like R.
+  [1] The slice interface is similar to Tamas' affi package, but now
+  arbitrary index vectors are allowed, much like R.
