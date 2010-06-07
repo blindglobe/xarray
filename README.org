@@ -3,11 +3,19 @@
   This README file was produced for processing by Emacs org-mode for
   publishing, for literate-programming of examples, for bug-tracking
   and task/issue management, etc.
+
+  (leveraging ORG-MODE tools for mixing in TODO's within docs -- need
+  to include incantation for this to do the right thing for the agenda
+  view!
 ** TODO [#A] Write up basic description for using this file!
    - State "TODO"       from ""           [2010-06-07 Mon 16:18]
+#+begin_src emacs-lisp
+  ;; code for using this and the in-lined commented TODOs
+  ;; of course, still must be written
+#+end_src
 * Credits
-  Original Idea and majority of work:  Tamas Papp
-  Mucking, cleaning, simplifying: AJ Rossini
+  Original Idea and majority (all?) work:  Tamas K. Papp <tkpapp@gmail.com>
+  Mucking, cleaning, simplifying: AJ Rossini <blindglobe@gmail.com>
 * Overview
   This package implements a generalized interface for array-like
   objects.  An array-like object is any structure whose data (but not
@@ -107,13 +115,6 @@
   cvector and carray (manually specified type) and cvector*.
 
 * Roadmap, tasks, bugs.
-  (leveraging ORG-MODE tools for mixing in TODO's within docs -- need
-  to include incantation for this to do the right thing for the agenda
-  view!
-#+begin_src emacs-lisp
-;; code for using this and the in-lined commented TODOs
-;; of course, still must be written
-#+end_src
 ** TODO [#B] unit testing [0/5]
    - State "TODO"       from ""           [2010-06-07 Mon 15:33]
 *** TODO [#B] XDIMS unittests
@@ -159,9 +160,6 @@
    - State "TODO"       from ""           [2010-06-07 Mon 15:38]
 ** TODO [#B] implement equalp for XREF-able objects
    - State "TODO"       from ""           [2010-06-07 Mon 15:40]
-* Authors
-  Tamas K Papp <tkpapp@gmail.com>
-  Corrupted by AJ Rossini <blindglobe@gmail.com>
 * Development in progress
   To use this from within org-mode/org-babel, C-c ' will put into
   slime / lisp editing mode
