@@ -108,24 +108,26 @@
   guess the type so that all of the elements would fit in.  See also
   cvector and carray (manually specified type) and cvector*.
 
-* Roadmap:
-
-** TODO unit testing [0/5]
+* Roadmap, tasks, bugs.
+  (leveraging ORG-MODE tools for mixing in TODO's within docs -- need
+  to include incantation for this to do the right thing for the agenda
+  view!
+#+begin_src emacs-lisp
+;; code for using this and the in-lined commented TODOs
+;; of course, still must be written
+#+end_src
+** TODO [#B] unit testing [0/5]
    - State "TODO"       from ""           [2010-06-07 Mon 15:33]
 *** TODO [#B] XDIMS unittests
     - State "TODO"       from ""           [2010-06-07 Mon 15:29]
 *** TODO [#B] XTYPE unittests
     - State "TODO"       from ""           [2010-06-07 Mon 15:29]
-      
 *** TODO [#B] XREF unittests
     - State "TODO"       from ""           [2010-06-07 Mon 15:29]
-      
 *** TODO [#B] XCOPY unittests
     - State "TODO"       from ""           [2010-06-07 Mon 15:29]
-      
 *** TODO [#B] XNEW unittests
     - State "TODO"       from ""           [2010-06-07 Mon 15:29]
-      
 ** TODO [#A] integrate linear algebra routines
    - State "TODO"       from ""           [2010-06-07 Mon 15:33]
    probably from GSLL?  It should
@@ -155,6 +157,10 @@
    certain views can be directly accommodated by LAPACK/GSLL (eg a
    matrix with a stride).  Minor possibility for speedup/memory
    savings.  This is related to optimization based on substructure. 
+** TODO [#B] fix SLICE api between LISP-MATRIX and XARRAY
+   - State "TODO"       from ""           [2010-06-07 Mon 15:38]
+** TODO [#B] implement equalp for XREF-able objects
+   - State "TODO"       from ""           [2010-06-07 Mon 15:40]
 * Author
 
   Tamas K Papp <tkpapp@gmail.com>
