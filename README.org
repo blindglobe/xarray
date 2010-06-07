@@ -1,0 +1,140 @@
+
+* Credits
+
+  Original Idea and majority of work:  Tamas Papp
+  Mucking, cleaning, simplifying: AJ Rossini
+
+* Overview
+
+  This package implements a generalized interface for array-like
+  objects.  An array-like object is any structure whose data (but not
+  necessarily metadata) could be mappable to either a lisp array or a
+  list-of-list structure.  The idea is that we should be able to index
+  an object's data, but might not be able to access specialized
+  metadata.   The primary generic function is: 
+
+#+begin_src
+  (xref object #| 1 2 3 or other things that reference objects |# )
+#+end_src
+
+  to retrieve or set an element.  This would be easy to do it aref was
+  a generic function, but it is not.  I describe a simple interface
+  with a few generic functions. 
+
+  Any objects that has these methods is called "xrefable".  For a
+  given datastructure, we must implement the following tools.  
+
+** XDIMS
+   queries dimensions of structure
+#+begin_src common-lisp
+(xdims object) 
+#+end_src
+** XTYPE
+#+begin_src common-lisp
+   (xtype object &optional <ref>)
+#+end_src
+   queries element and substructure types.  If <ref> is given, it
+   returns the substructure, if <ref> is nil, it returns the whole
+   structure. 
+** XREF
+#+begin_src common-lisp
+   (xref object <ref>)
+#+end_src
+   queries (sub)structure and returns views which can be accessed and
+   set.  The refere
+** XCOPY
+#+begin_src common-lisp
+   (xcopy object <ref>)
+#+end_src
+   queries (sub)structure and returns copies.  If one gets confused
+   between a view and copy, dire consequences could entail, so we use
+   separate generic functions for reference and copy, rather than a
+   single "xaccess", which could result in:
+#+begin_src common-lisp
+   (defmacro xref  (&rest args) (xaccess :type 'reference @args))
+   (defmacro xcopy (&rest args) (xaccess :type 'copy      @args))
+#+end_src
+** XNEW
+   creates a new structure.  One could consider using a undefined
+   object in order to implement this with setf, i.e. 
+#+begin_src common-lisp
+   (setf (xref undef-object <refs>) object-with-right-structure)
+#+end_src
+   and having it return undef-object with the right value.
+
+* Approach in general
+
+  Both copies and views on an array should be XREF-able.  
+
+  Example: For an two-dimensional array *a*,
+
+#+begin_src common-lisp
+  (slice *a* :all 4)
+#+end_src
+
+  selects the 4th column of an array.[1] This view is also xrefable,
+  so you can use
+
+#+begin_src common-lisp
+  (setf (xref (slice *a* :all 4) 2) 9)
+#+end_src
+
+  to set element 2 to 9.  Changes will be made in the original array
+  *a*, since this is a view.  But for functions that just expect an
+  array, they can use the interface (xref, xdims, etc) and not care
+  where it is coming from.
+
+
+  I have also implemented permutations (generalized transpose), and
+  row-major projections.  If you want to collect the elements of a
+  view in an array, use (take object), which delivers a CL array.
+
+  There are convenience functions that for easy array/vector creation,
+  inspired by R:
+
+#+begin_src common-lisp
+  (carray* '(2 3) 1 2 3 4d0 5 6)
+  ;; => #2A((1.0d0 2.0d0 3.0d0) (4.0d0 5.0d0 6.0d0))
+#+end_src
+
+  guess the type so that all of the elements would fit in.  See also
+  cvector and carray (manually specified type) and cvector*.
+
+* Roadmap:
+
+** unit testing.  supremely important.
+
+** integrate linear algebra routines
+   probably from GSLL?  It should
+   be easy to rig an xrefable interface to GSLL arrays.
+
+** Specialized arrays
+   upper- and lower-triangular matrices, etc.  xrefable elements can
+   be read-only, xref-writeable-p is an interface to test if an
+   element is writeable, it was included specifically for this.
+
+   integrate sparse matrices from cl-sparsematrix.
+
+** specialized subclasses for certain cases and operations
+   eg views on matrices, a transpose-view would be much simpler (and
+   faster, maybe?) than the generalized permute.
+
+** decent printing for xrefable objects,
+   currently converted to array.
+
+** direct access from other systems
+   certain views can be directly accommodated by LAPACK/GSLL (eg a
+   matrix with a stride).  Minor possibility for speedup/memory
+   savings.
+
+* Author
+
+Tamas K Papp
+tkpapp@gmail.com
+
+(and corrupted by AJ Rossini <blindglobe@gmail.com>
+
+* Disserata and Footnotes
+
+[1] The slice interface is similar to Tamas' affi package, but now
+arbitrary index vectors are allowed, much like R.
