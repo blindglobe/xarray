@@ -10,16 +10,41 @@
 
 ;;;; Basic interface
 ;;;;
-;;;; Objects accessible with xref are array-like objects, where
-;;;; elements are indexed with (xrank object) subscripts, each ranging
-;;;; from 0 to (1- (xdim object dimension)), inclusive.  Not all
-;;;; elements need to be setable, if they are not, trying to call
-;;;; (setf xref) on that element will signal a condition.
+;;;; Objects accessible with xref are array-like objects of
+;;;;
+;;;;    (xdims object)
+;;;;
+;;;; dimensions, where elements are indexed with
+;;;;
+;;;;    (xrank object)
+;;;;
+;;;; subscripts, each ranging from
+;;;;
+;;;;    (list 0 (1- (nth dimension (xdims object)))) 
+;;;;
+;;;; inclusive.  Not all elements need to be setable, if
+;;;; they are not, trying to call
+;;;;
+;;;;    (setf xref)
+;;;;
+;;;; on that element will signal a condition.
 ;;;;
 ;;;; Objects can have a particular type imposed on elements, which can
-;;;; be queried with xelttype.  Elements returned by xref are
-;;;; guaranteed to be a subtype of this type, and (setf xref) needs to
-;;;; be given elements that are a subtype of this.
+;;;; be checked by looking at the contents of 
+;;;;
+;;;;    (xtype object <ref>)
+;;;;
+;;;; and finally
+;;;;
+;;;;    (xref object <ref>)
+;;;;
+;;;; will access the particular structure needed.  Elements returned
+;;;; by xref are guaranteed to be a subtype of this type, and for
+;;;;
+;;;;    (setf (xref object <ref>) <new object>)
+;;;;
+;;;; we have that <new object> must consist of elements that are an
+;;;; appropriate subtype.
 ;;;; 
 ;;;; Conditions for the wrong number of subscripts, subscripts being
 ;;;; out of bounds, or writing non-writable elements or elements with
@@ -82,36 +107,35 @@
 (defgeneric (setf xref) (value object &rest subscripts)
   (:documentation "Accesses the element of the object specified by subscripts."))
 
-
 ;;;; xsetf allow to set elements of an xrefable object to those of
 ;;;; another.
 ;;;;
 ;;;; ??? should we lose the function? -- Tamas
+;;;; NO.  -tony
 
 (defgeneric xsetf (destination source &key map-function)
   (:method (destination source &key 
-                        (map-function
-                         (element-conversion-function (xelttype source)
-                                                      (xelttype destination))))
+	    (map-function
+	     (element-conversion-function (xelttype source)
+					  (xelttype destination))))
     (unless (equalp (xdims source) (xdims destination))
       (error "source and destination do not have conforming dimensions"))
     (let ((dimensions (xdims source)))
       (if (and map-function (not (eq map-function #'identity)))
-          ;; map-function is not given or identity, don't apply
+	  ;; map-function is not given or identity, don't apply
 	  (dotimes (i (xsize source))
 	    (let ((subscripts (cm-subscripts dimensions i)))
 	      (setf (apply #'xref destination subscripts)
 		    (apply #'xref source subscripts))))
-          ;; use map-function
+	  ;; use map-function
 	  (dotimes (i (xsize source))
 	    (let ((subscripts (cm-subscripts dimensions i)))
 	      (setf (apply #'xref destination subscripts)
 		    (funcall map-function (apply #'xref source subscripts)))))))
     destination)
   (:documentation "Copy the elements of source to destination.
-Map-function, if given, will be used to map the elements, the default
-is conversion (if necessary) with coerce."))
-
+     Map-function, if given, will be used to map the elements, the
+     default is conversion (if necessary) with coerce."))
 
 ;;;;  An object is characterized by its CLASS (a symbol), various
 ;;;;  class-specific OPTIONS (a list of keyword-value pairs, can be
@@ -161,11 +185,11 @@ target-spec directly to create an object.  This function is meant for
 internal use, when mapping functions need to determine a target spec
 from one of the arguments."
   (bind ((dimensions (if (eq dimensions t) (xdims object) dimensions))
-         ((:values class options) (if (atom target-spec)
-                                      (values target-spec nil)
-                                      (values (car target-spec) (cdr target-spec)))))
+	 ((:values class options) (if (atom target-spec)
+				      (values target-spec nil)
+				      (values (car target-spec) (cdr target-spec)))))
     (xcreate (if (eq class t) (xsimilar (length dimensions) object) class)
-             dimensions (merge-options options more-options))))
+	     dimensions (merge-options options more-options))))
 
 (defgeneric as* (class object copy-p options)
   (:documentation "Return an object converted to a given class, with
@@ -181,11 +205,11 @@ interface is AS or COPY-AS.")
     ;; fallback case: object created by xcreate, copied elementwise
     (declare (ignore copy-p))
     (let* ((dims (xdims object))
-           (result (xcreate class dims options)))
+	   (result (xcreate class dims options)))
       (dotimes (i (xsize object))
-        (let ((subscripts (cm-subscripts dims i)))
-          (setf (apply #'xref result subscripts)
-                (apply #'xref object subscripts))))
+	(let ((subscripts (cm-subscripts dims i)))
+	  (setf (apply #'xref result subscripts)
+		(apply #'xref object subscripts))))
       result))
   (:method ((class (eql t)) object copy-p options)
     ;; take type from xsimilar
@@ -193,7 +217,7 @@ interface is AS or COPY-AS.")
   (:method ((class list) object copy-p options)
     ;; split class and merge options
     (as* (car class) object :copy-p copy-p
-          :options (merge-options (cdr class) options))))
+	 :options (merge-options (cdr class) options))))
 
 (defun as (class object &rest options)
   "Convert OBJECT to CLASS.  May share structure."
