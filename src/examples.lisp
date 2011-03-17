@@ -1,3 +1,19 @@
+;;; -*- mode: lisp -*-
+
+;;; Time-stamp: <2011-03-17 17:57:00 tony>
+;;; Creation:   
+;;; File:       examples.lisp
+;;; Author:     Tomas Papp
+;;; Maintainer: AJ Rossini <blindglobe@gmail.com>
+;;; Copyright:  (c)2009--, AJ Rossini.  Currently licensed under MIT
+;;;             license.  See file LICENSE.mit in top-level directory
+;;;             for information.
+;;; Purpose:    Examples for using XARRAY
+
+;;; What is this talk of 'release'? Klingons do not make software
+;;; 'releases'.  Our software 'escapes', leaving a bloody trail of
+;;; designers and quality assurance people in its wake.
+
 (in-package :xarray)
 
 (defparameter *a* (make-array '(4 5)))
