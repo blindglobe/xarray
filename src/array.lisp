@@ -1,7 +1,11 @@
+
+
+
 (in-package :xarray)
 
-;;;;  Array is the of course the most important of xrefable objects.
-;;;;  The interface maps to CL functions in a straightforward manner.
+;;;;  The native Lisp ARRAY is the of course the most important of
+;;;;  xrefable objects.  The interface maps to CL functions in a
+;;;;  straightforward manner.
 
 (defmethod xelttype ((object array))
   (array-element-type object))
@@ -56,6 +60,10 @@
 (defmethod as* ((class (eql 'vector)) object copy-p options)
   (assert (= (xrank object) 1) () "OBJECT is not a vector.")
   (as* 'array object copy-p options))
+
+
+;;; TODO: need to refactor these out elsewhere, into general purpose
+;;; building methods.
 
 ;;;;  Convenience functions for vector and array construction.  All
 ;;;;  return simple-arrays of the specified type, the versions with *
