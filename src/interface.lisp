@@ -1,3 +1,19 @@
+;;; -*- mode: lisp -*-
+
+;;; Time-stamp: <2011-03-17 18:03:10 tony>
+;;; Creation:   
+;;; File:       interface.lisp
+;;; Author:     Tamas Papp
+;;; Maintainer: AJ Rossini <blindglobe@gmail.com>
+;;; Copyright:  (c)2009--, AJ Rossini.  Currently licensed under MIT
+;;;             license.  See file LICENSE.mit in top-level directory
+;;;             for information.
+;;; Purpose:    describes generics for interface.
+
+;;; What is this talk of 'release'? Klingons do not make software
+;;; 'releases'.  Our software 'escapes', leaving a bloody trail of
+;;; designers and quality assurance people in its wake.
+
 (in-package :xarray)
 
 ;;;; General interface for objects accessible with xref (objects like
@@ -13,6 +29,7 @@
 ;;;; Objects accessible with xref are array-like objects of
 ;;;;
 ;;;;    (xdims object)
+;;;;    (= (nth N (xdims object)) (xdim object N))
 ;;;;
 ;;;; dimensions, where elements are indexed with
 ;;;;
@@ -45,7 +62,9 @@
 ;;;;
 ;;;; we have that <new object> must consist of elements that are an
 ;;;; appropriate subtype.
-;;;; 
+
+
+
 ;;;; Conditions for the wrong number of subscripts, subscripts being
 ;;;; out of bounds, or writing non-writable elements or elements with
 ;;;; incorrect type are available. (!!! see notes there)
@@ -102,10 +121,12 @@
 ;;;; read-only elements, or does not need to be defined at all.
 
 (defgeneric xref (object &rest subscripts)
-  (:documentation "Accesses the element of the object specified by subscripts."))
+  (:documentation
+   "Accesses the element of the object specified by subscripts."))
 
 (defgeneric (setf xref) (value object &rest subscripts)
-  (:documentation "Accesses the element of the object specified by subscripts."))
+  (:documentation
+   "Accesses the element of the object specified by subscripts."))
 
 ;;;; xsetf allow to set elements of an xrefable object to those of
 ;;;; another.
@@ -131,7 +152,8 @@
 	  (dotimes (i (xsize source))
 	    (let ((subscripts (cm-subscripts dimensions i)))
 	      (setf (apply #'xref destination subscripts)
-		    (funcall map-function (apply #'xref source subscripts)))))))
+		    (funcall map-function
+			     (apply #'xref source subscripts)))))))
     destination)
   (:documentation "Copy the elements of source to destination.
      Map-function, if given, will be used to map the elements, the
@@ -176,19 +198,26 @@
   (XCREATE (CONS CLASS OPTIONS) DIMENSIONS), in which case it will
   split the cons, merge OPTIONS and call XCREATE again.")
   (:method ((class list) dimensions &optional options)
-    (xcreate (car class) dimensions (merge-options (cdr class) options))))
+    (xcreate (car class)
+	     dimensions
+	     (merge-options (cdr class) options))))
 
-(defun xcreate-similar (target-spec object dimensions &optional more-options)
+(defun xcreate-similar (target-spec object dimensions
+			&optional more-options)
   "If TARGET-SPEC is T or (CONS T OPTIONS), use xsimilar to determine
 target spec using object (and also merge options), otherwise use
 target-spec directly to create an object.  This function is meant for
 internal use, when mapping functions need to determine a target spec
 from one of the arguments."
   (bind ((dimensions (if (eq dimensions t) (xdims object) dimensions))
-	 ((:values class options) (if (atom target-spec)
-				      (values target-spec nil)
-				      (values (car target-spec) (cdr target-spec)))))
-    (xcreate (if (eq class t) (xsimilar (length dimensions) object) class)
+	 ((:values class options)
+	  (if (atom target-spec)
+	      (values target-spec nil)
+	      (values (car target-spec)
+		      (cdr target-spec)))))
+    (xcreate (if (eq class t)
+		 (xsimilar (length dimensions) object)
+		 class)
 	     dimensions (merge-options options more-options))))
 
 (defgeneric as* (class object copy-p options)
