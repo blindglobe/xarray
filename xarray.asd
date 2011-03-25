@@ -31,6 +31,7 @@
     :components
     ((:file "types")
      (:file "utilities")
+     (:file "conditions")
      (:file "interface")))
    (:module
     "functionality"
