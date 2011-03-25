@@ -1,5 +1,5 @@
 
-Time-stamp: <2011-03-17 18:00:08 tony>
+Time-stamp: <2011-03-25 17:18:22 tony>
 
 * Using this file
 
@@ -33,6 +33,7 @@ Time-stamp: <2011-03-17 18:00:08 tony>
 
 #+begin_src lisp
   (asdf:oos 'asdf:load-op :xarray)
+  (asdf:oos 'asdf:compile-op :xarray :force T)
 #+end_src
 
    or if using Quicklisp, something like:
@@ -291,7 +292,6 @@ Time-stamp: <2011-03-17 18:00:08 tony>
 #+end_src
 
 * Discussion
-
 
 
 * Footnotes
