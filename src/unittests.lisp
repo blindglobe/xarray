@@ -74,7 +74,7 @@
 (deftestsuite xarray-ut-xrank (xarray-ut) ())
 (deftestsuite xarray-ut-xdims (xarray-ut) ()) ; includes range
 (deftestsuite xarray-ut-slice (xarray-ut) ())
-(deftestsuite xarray-ut-take  (xarray-ut) ())
+(deftestsuite xarray-ut-copy-as  (xarray-ut) ())
 
 (deftestsuite xarray-ut-lol  (xarray-ut) ()) ; for list-of-list coherency
 
@@ -155,12 +155,12 @@
  (defparameter arry-ex3 #(12 22 32))
 
  (princ-and-equalp #2A((11))
-		  (take  (slice arry-ex0 '(0) '(0))))
+		  (copy-as  (slice arry-ex0 '(0) '(0))))
 
 |#
 
 (defmacro equalp-arr-xref (my-array my-xrefable)
-  `(equalp ,my-array (take ,my-xrefable)))
+  `(equalp ,my-array (copy-as ,my-xrefable)))
 
 (defmacro princ-and-equalp (my-array my-xrefable)
   `(progn 
@@ -172,22 +172,22 @@
 (addtest (xarray-ut-slice) slice-0
 	 (ensure
 	  (equalp #2A((11))
-		  (take  (slice array-ex0 '(0) '(0))))))
+		  (copy-as  (slice array-ex0 '(0) '(0))))))
 
 (addtest (xarray-ut-slice) slice-1
 	 (ensure
 	  (equalp array-ex1
-		  (take (slice array-ex0 '(1) :all)))))
+		  (copy-as (slice array-ex0 '(1) :all)))))
 
 (addtest (xarray-ut-slice) slice-1a
 	 (ensure
 	  (equalp array-ex2
-		  (take (slice array-ex0 :all '(1) )))))
+		  (copy-as (slice array-ex0 :all '(1) )))))
 
 (addtest (xarray-ut-slice) slice-2
 	 (ensure
 	  (equalp #2A ((12 13) (22 23))
-		  (take (slice array-ex0 '(0 1) '(1 2))))))
+		  (copy-as (slice array-ex0 '(0 1) '(1 2))))))
 
 #|
  (run-tests :suite 'xarray-ut)
