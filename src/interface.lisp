@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2011-03-17 18:03:10 tony>
+;;; Time-stamp: <2011-03-25 17:27:21 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -80,16 +80,23 @@
   does not share structure with anything, so it can be freely
   modified."))
 
+(defgeneric xdim (object dim)
+  (:documentation "Return the size of the dim-th dim.  We use the
+  default unless there is some sensible reason to implement
+  otherwise.")
+  (:method ((object t) (dim integer))
+    (nth dim (xdims object))))
+
 (defgeneric xrank (object)
   (:documentation "Returns the number of dimensions of object.")
-  (:method (object)
+  (:method ((object t))
     (length (xdims object))))
 
 (defgeneric xdim (object axis-number)
-  (:method (object axis-number)
+  (:documentation "Return the axis-number dimension of object.")
+  (:method ((object t) (axis-number integer))
     (let ((dim (nth axis-number (xdims object))))
-      (if dim dim (error 'xdim-invalid-axis-number))))
-  (:documentation "Return the axis-number dimension of object."))
+      (if dim dim (error 'xdim-invalid-axis-number)))))
 
 (defgeneric xsize (object)
   (:documentation "Return the total number of elements in object.")
