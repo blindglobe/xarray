@@ -30,7 +30,7 @@
 (defmethod print-object ((object view) stream)
   (print-unreadable-object (object stream :type t :identity t)
     ;; TAKEing the easy way out, need to write this decently one day
-    (print (take 'array object) stream)))
+    (print (copy-as 'array object) stream)))
 
 (defun original-ancestor (view)
   "Find the original ancestor (ie the one that is not a view).  Simply

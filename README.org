@@ -1,5 +1,5 @@
 
-Time-stamp: <2011-03-25 17:18:22 tony>
+Time-stamp: <2011-04-16 08:48:28 tony>
 
 * Using this file
 
@@ -181,7 +181,7 @@ Time-stamp: <2011-03-25 17:18:22 tony>
   row-major projections.  If you want to collect the elements of a
   view in an array ("deep copy"), use
 #+begin_src common-lisp
-  (take object)
+  (copy-as object)
 #+end_src
 
   which delivers a CL array.  
