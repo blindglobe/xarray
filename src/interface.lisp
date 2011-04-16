@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2011-03-25 17:27:21 tony>
+;;; Time-stamp: <2011-04-16 08:53:47 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -227,11 +227,11 @@ interface is AS or COPY-AS.")
       result))
   (:method ((class (eql t)) object copy-p options)
     ;; take type from xsimilar
-    (as* (xsimilar t object) object :copy-p copy-p :options options))
+    (as* (xsimilar t object) object copy-p options))
   (:method ((class list) object copy-p options)
     ;; split class and merge options
-    (as* (car class) object :copy-p copy-p
-	 :options (merge-options (cdr class) options))))
+    (as* (car class) object copy-p
+	 (merge-options (cdr class) options))))
 
 (defun as (class object &rest options)
   "Convert OBJECT to CLASS.  May share structure."
