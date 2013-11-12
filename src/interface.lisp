@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2011-04-16 08:53:47 tony>
+;;; Time-stamp: <2013-11-12 18:46:42 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -49,7 +49,7 @@
 ;;;; Objects can have a particular type imposed on elements, which can
 ;;;; be checked by looking at the contents of 
 ;;;;
-;;;;    (xtype object <ref>)
+;;;;    (xeltype object <ref>)
 ;;;;
 ;;;; and finally
 ;;;;
@@ -70,10 +70,11 @@
   (:documentation "Return the type of elements.  If no restriction is
   imposed, return t."))
 
-;;;; In most cases, you should only implement xdims, the rest will be
-;;;; defined in a sane way by generic functions.  The rest only needs
-;;;; to be implemented for efficiency reasons, but this should be a
-;;;; minor concern for most applications.
+;;; For accessing dimensions:
+;;; In most cases, you should only implement xdims, the rest will be
+;;; defined in a sane way by generic functions.  The rest only needs
+;;; to be implemented for efficiency reasons, but this should be a
+;;; minor concern for most applications.
 
 (defgeneric xdims (object)
   (:documentation "Return a list of dimensions of object.  The list

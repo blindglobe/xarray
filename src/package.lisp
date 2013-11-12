@@ -5,18 +5,22 @@
   (:shadowing-import-from :iterate :collecting :collect)
   (:export
 
-   ;; types -- for internal use
-
    ;; utilities
    
    rm-index rm-subscripts cm-index cm-subscripts
-   ;; multf maxf minf
    
    ;; interface
 
-   xelttype xrank xdims xdim xsize xref-subscript-out-of-bounds
-   xref-wrong-number-of-subscripts xref-setting-readonly
-   xref-incompatible-type xdim-invalid-axis-number xsetf xref xtype
+   xelttype #| xtype |#
+   xrank xdims xdim xsize 
+
+   xref-subscript-out-of-bounds
+   xref-wrong-number-of-subscripts 
+   xref-setting-readonly
+   xref-incompatible-type
+   xdim-invalid-axis-number
+
+   xsetf xref 
    xsimilar xcreate xcreate-similar as* as copy-as
 
    ;; array

@@ -1,5 +1,5 @@
 
-Time-stamp: <2011-04-16 08:48:28 tony>
+Time-stamp: <2013-11-12 18:46:47 tony>
 
 * Using this file
 
@@ -78,11 +78,11 @@ Time-stamp: <2011-04-16 08:48:28 tony>
 
    Access individual elements in an array.
 
-#+begin_src
+#+begin_src lisp
   (xref object
         #| 1 2 3 or similar indexing sequence |# )
   (setf (xref object
-               #| 1 2 3 or similar indexing sequence |# )
+              #| 1 2 3 or similar indexing sequence |# )
         value)
 #+end_src
 
@@ -112,15 +112,17 @@ Time-stamp: <2011-04-16 08:48:28 tony>
   (nth 1 (xdims object))
 #+end_src
 
-** XTYPE
+** XELTTYPE
 
 #+begin_src lisp
-   (xtype object &optional <ref>)
+   (xelttype object &optional <ref>)
 #+end_src
 
    queries element and substructure types.  If <ref> is given, it
    returns the substructure, if <ref> is nil, it returns the whole
    structure.
+
+
 
 ** XCOPY
 
@@ -145,7 +147,6 @@ Time-stamp: <2011-04-16 08:48:28 tony>
 #+end_src
    and having it return undef-object with the right value.
 
-** XELTTYPE
 ** XRANK
 ** XSIMILAR
 ** XSIZE
