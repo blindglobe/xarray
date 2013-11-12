@@ -2,7 +2,7 @@
 
 ;; functions to check for validity of subscripts and indexes
 
-(declaim (inline within-dimension-p vector-within-dimension-p))
+;; (declaim (inline within-dimension-p vector-within-dimension-p)) 
 
 (defun within-dimension-p (subscript dimension)
   "Check if 0 <= subscript < dimension."
@@ -72,12 +72,12 @@ vector, list also accepted).  Checks for boundaries and rank."
   "Calculate the column-major flat index from subscripts (list of
 fixnums) and dimensions (list of fixnums).  Works in the corner case
 when dimensions and subscripts are both nil."
-  (declare (optimize speed))
+  ;;(declare (optimize speed))
   (iter
     (with cumprod := 1)
     (for d :in dimensions)
     (for s :in subscripts)
-    (declare (fixnum s d cumprod))
+    ;;(declare (fixnum s d cumprod))
     (assert (and (<= 0 s) (< s d)))
     (summing (the fixnum (* s cumprod)))
     (setf cumprod (* cumprod d))))
@@ -87,12 +87,12 @@ when dimensions and subscripts are both nil."
 i (fixnum), using dimensions (list of fixnums).  No error checking,
 for internal use only.  Works in the corner case when dimension is
 nil."
-  (declare (optimize speed))
+  ;;(declare (optimize speed))
   (check-type i fixnum)
   (iter
     (for d :in dimensions)
     (for (values quotient remainder) := (floor i d))
-    (declare (fixnum d quotient remainder))
+    ;;(declare (fixnum d quotient remainder))
     (collecting remainder)
     (setf i quotient)))
 
