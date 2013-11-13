@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-12 18:46:47 tony>
+Time-stamp: <2013-11-12 19:19:29 tony>
 
 * Using this file
 
@@ -25,7 +25,7 @@ Time-stamp: <2013-11-12 18:46:47 tony>
 ** Credits
 
    Original Idea and majority (all?) work:  Tamas K. Papp <tkpapp@gmail.com>
-   Mucking, cleaning, simplifying: AJ Rossini <blindglobe@gmail.com>
+   Mucking, cleaning, simplifying, maintainance: AJ Rossini <blindglobe@gmail.com>
 
 ** Quick Start
 
@@ -38,9 +38,8 @@ Time-stamp: <2013-11-12 18:46:47 tony>
 
    or if using Quicklisp, something like:
 
-#+srcname: 
 #+begin_src lisp
-  (ql:load :xarray)
+  (ql:quickload :xarray)
 #+end_src
 
    If you are a neanderthal, and want to go back to the roots, you can
