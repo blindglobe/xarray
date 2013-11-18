@@ -1,9 +1,10 @@
 (in-package :xarray)
 
-;;;; Views are objects which provide an xarray interface.  Their sole
-;;;; purpose is mapping the subscripts they are addressed with into
-;;;; another set of subscripts, which is used to address another
-;;;; object called their ancestor.
+;;;; Views are (sub)representations of xarray-able objects, which
+;;;; provide an xarray interface.  Their sole purpose is mapping the
+;;;; subscripts they are addressed with into another set of
+;;;; subscripts, which is used to address another object called their
+;;;; ancestor.  (i.e. the original from where the view comes from)
 ;;;;
 ;;;; Below you find some standard views with agnostic (and perhaps not
 ;;;; super-fast) implementations.  Perhaps we can make them faster by
@@ -16,45 +17,52 @@
 ;;;; appear more than once, this could be useful.  Should I forbid
 ;;;; this?  Not in the CL spirit. -- Tamas
 
-(defclass view ()
-  ((ancestor :initarg :ancestor :reader ancestor 
-	     :documentation "an underlying object that is accessible with
+(defclass xview ()
+  ((ancestor :initarg :ancestor
+	     :reader ancestor 
+	     :documentation
+	     "the view of an underlying object that is accessible with
                              xref")))
 
-(defmethod xelttype ((object view))
+;; xarray API 
+
+(defmethod xelttype ((object xview))
   (xelttype (ancestor object)))
 
-(defmethod xsimilar (rank (object view))
+(defmethod xsimilar (rank (object xview))
   (xsimilar rank (ancestor object)))
 
-(defmethod print-object ((object view) stream)
+(defmethod print-object ((object xview) stream)
   (print-unreadable-object (object stream :type t :identity t)
     ;; TAKEing the easy way out, need to write this decently one day
     (print (copy-as 'array object) stream)))
 
 (defun original-ancestor (view)
   "Find the original ancestor (ie the one that is not a view).  Simply
-returns objects which are not views."
+returns objects which are not views.  Since views can be nested, this
+needs to follow the chain backwards."
   (tagbody
      top
-     (when (typep view 'view)
+     (when (typep view 'xview)
        (setf view (ancestor view))
        (go top)))
   view)
 
-;;;; permutations
-;;;;
-;;;; Permutations interchange the dimension indexes.
+;;; Permutations
+;;;
+;;; Permutations are a view which simply interchange the dimension
+;;; indexes.
 
 (defgeneric permutation (object &rest permutation)
-  (:documentation "View with permutation of indexes."))
+  (:documentation "Takes an xarray-able object and creates a View
+  which is a permutation of indexes."))
 
-;;;; permutation-view
-;;;;
-;;;; A general permutation, the only assumption is that object is
-;;;; xrefable.
+;;; permutation-view
+;;;
+;;; A general permutation, the only assumption is that object is
+;;; xrefable.
 
-(defclass permutation-view (view)
+(defclass permutation-xview (view)
   ((permutation :initarg :permutation :type fixnum-vector
 		:documentation "permutation")
    (dimensions :initarg :dimensions :reader dimensions :type fixnum-vector
@@ -65,10 +73,10 @@ returns objects which are not views."
     (unless (vector-within-dimension-p #|valid-permutation-p|#
 	     permutation (xrank object))
       (error "permutation ~a is not valid" permutation))
-    (make-instance 'permutation-view :ancestor object
+    (make-instance 'permutation-xview :ancestor object
 		   :permutation permutation)))
 
-(defmethod initialize-instance :after ((object permutation-view) &key)
+(defmethod initialize-instance :after ((object permutation-xview) &key)
   ;; save dimensions
   (with-slots (ancestor permutation dimensions) object
     (setf dimensions 
@@ -76,20 +84,20 @@ returns objects which are not views."
 		  'fixnum-vector)))
   object)
 
-(defmethod xrank ((object permutation-view))
+(defmethod xrank ((object permutation-xview))
   (xrank (ancestor object)))
 
-(defmethod xdims ((object permutation-view))
+(defmethod xdims ((object permutation-xview))
   (coerce (dimensions object) 'list))
 
-(defmethod xdim ((object permutation-view) axis-number)
+(defmethod xdim ((object permutation-xview) axis-number)
   (aref (dimensions object) axis-number))
 
-(defmethod xref ((object permutation-view) &rest subscripts)
+(defmethod xref ((object permutation-xview) &rest subscripts)
   (with-slots (ancestor permutation) object
     (apply #'xref ancestor (permute-sequence permutation subscripts))))
 
-(defmethod (setf xref) (value (object permutation-view) &rest subscripts)
+(defmethod (setf xref) (value (object permutation-xview) &rest subscripts)
   (with-slots (ancestor permutation) object
     (setf (apply #'xref ancestor (permute-sequence permutation subscripts))
 	  value)))
@@ -107,21 +115,21 @@ returns objects which are not views."
 	    "Can only transpose a rank-2 object.  Current object is rank ~S" (xrank object))
     (permutation object 1 0)))
 
-;;;; slices
+;;;; xslices
 ;;;;
-;;;; A slice is a view on a subset of indexes in each dimension.  When
+;;;; An xslice is a view on a subset of indexes in each dimension.  When
 ;;;; a slice contains only a single index in a dimension, that
-;;;; dimension can be dropped from the slice.  For valid index
+;;;; dimension can be dropped from the xslice.  For valid index
 ;;;; specifications, see parse-index-specifications.
 
-(defgeneric slice (object &rest index-specifications)
+(defgeneric xslice (object &rest index-specifications)
   (:documentation "Slice of an object."))
 
 ;;;; slice-view
 ;;;;
 ;;;; A general slice, the only assumption is that object is xrefable.
 
-(defclass slice-view (view)
+(defclass xslice-xview (view)
   ((index-specifications :initarg :index-specifications
 			 :reader index-specifications
 			 :type fixnum-vector
@@ -201,7 +209,7 @@ no error checking.  Return nil for dropped dimensions."
     (cons (abs (cdr index-specification)))    ; range
     (vector (length index-specification))))   ; enumerated indexes
 
-(defmethod slice (object &rest index-specifications)
+(defmethod xslice (object &rest index-specifications)
   "Implementation note: we cache dimensions."
   (let* ((index-specifications (map 'vector
 				    #'parse-index-specification
@@ -243,7 +251,7 @@ no error checking.  Return nil for dropped dimensions."
 		(+ start (* (signum length*) ss))))
 	(vector (aref is (next subscript)))))))
 
-(defmethod xref ((object slice-view) &rest subscripts)
+(defmethod xref ((object xslice-xview) &rest subscripts)
   (with-slots (ancestor index-specifications dimensions) object
   ;; Check that the length of subscripts matches rank.
     (unless (= (length dimensions) (length subscripts))
@@ -252,7 +260,7 @@ no error checking.  Return nil for dropped dimensions."
     (apply #'xref ancestor 
 	   (convert-slice-subscripts index-specifications subscripts))))
 
-(defmethod (setf xref) (value (object slice-view) &rest subscripts)
+(defmethod (setf xref) (value (object xslice-xview) &rest subscripts)
   (with-slots (ancestor index-specifications dimensions) object
   ;; Check that the length of subscripts matches rank.
     (unless (= (length dimensions) (length subscripts))
@@ -266,12 +274,13 @@ no error checking.  Return nil for dropped dimensions."
 
 (defun drop (object)
   "Return a view with the unit dimensions dropped."
-  (apply #'slice object (mapcar (lambda (d)
-                                  (cond
-                                    ((< d 1) (error "don't know how to drop zero dimensions"))
-                                    ((= 1 d) 0)
-                                    (t :all)))
-                                (xdims object))))
+  (apply #'xslice object
+	 (mapcar (lambda (d)
+		   (cond
+		     ((< d 1) (error "don't know how to drop zero dimensions"))
+		     ((= 1 d) 0)
+		     (t :all)))
+		 (xdims object))))
 
 ;;;; !!!! row-major-projection is deprecated and will be removed.  I
 ;;;; !!!! am only using column-major projections now, and that
@@ -399,7 +408,7 @@ no error checking.  Return nil for dropped dimensions."
 ;;;;
 ;;;; A special case projecting onto a flat vector.
 
-(defclass column-major-projection-flat-view (view)
+(defclass column-major-projection-flat-view (xview)
   ((xsize :initarg :xsize :reader xsize :type fixnum :documentation "total size")
    (ancestor-dimensions :initarg :ancestor-dimensions
 			:reader ancestor-dimensions
@@ -458,35 +467,36 @@ no error checking.  Return nil for dropped dimensions."
                        :dimensions dimensions))))
 
 
-;;;; flat-view
-;;;;
-;;;; A view where elements can be accessed by a "flat" index on
-;;;; [0,total size), but the actual mapping is
-;;;; implementation-dependent.  Mainly used for elementwise access
-;;;; where the order of elements does not matter, especially
-;;;; elementwise reductions with commutative operations (eg sum,
-;;;; product, maximum, etc).
-;;;;
-;;;; There are two special considerations for this view: (1) it only
-;;;; has to implement reading elements, not setting them, (2) it has
-;;;; to implement ancestor-subscripts, which map the flat index to
-;;;; that of the ancestor.
-;;;;
-;;;; NOTE: flat-views do NOT have to be compatible across classes!  Eg
-;;;; for Lisp arrays a flat-view could be row-major, while for some
-;;;; other object it could be column major, etc.  Only use FLAT VIEWs
-;;;; if you truly don't care about the order.
 
 (defgeneric flat (object)
-  (:documentation "Flat index for an object."))
+  (:documentation "Flat index for an object.
+ flat-xview
 
-(defclass flat-view (view)
+ An xview where elements can be accessed by a \"flat\" index on
+ [0,total size), but the actual mapping is
+ implementation-dependent.  Mainly used for elementwise access
+ where the order of elements does not matter, especially
+ elementwise reductions with commutative operations (eg sum,
+ product, maximum, etc).
+
+ There are two special considerations for this xview: (1) it only
+ has to implement reading elements, not setting them, (2) it has
+ to implement ancestor-subscripts, which map the flat index to
+ that of the ancestor.
+
+ NOTE: flat-xviews do NOT have to be compatible across classes!  Eg
+ for Lisp arrays a flat-xview could be row-major, while for some
+ other object it could be column major, etc.  Only use FLAT XVIEWs
+ if you truly don't care about the order.
+"))
+
+(defclass flat-xview (xview)
   ((xsize :reader xsize :type fixnum :documentation "total size")
    (ancestor-dimensions :reader ancestor-dimensions
 			:type list
 			:documentation "dimensions of ancestor")))
 
-(defmethod initialize-instance :after ((object flat-view) &key)
+(defmethod initialize-instance :after ((object flat-xview) &key)
   ;; save ancestor-dimensions
   (with-slots (ancestor ancestor-dimensions xsize) object
     (setf ancestor-dimensions 
@@ -495,20 +505,20 @@ no error checking.  Return nil for dropped dimensions."
   object)
 
 (defmethod flat (object)
-  (make-instance 'flat-view :ancestor object))
+  (make-instance 'flat-xview :ancestor object))
 
-(defmethod xrank ((object flat-view))
+(defmethod xrank ((object flat-xview))
   1)
 
-(defmethod xdims ((object flat-view))
+(defmethod xdims ((object flat-xview))
   (list (xsize object)))
 
-(defmethod xdim ((object flat-view) axis-number)
+(defmethod xdim ((object flat-xview) axis-number)
   (if (zerop axis-number)
       (xsize object)
       (error 'xdim-invalid-axis-number)))
 
-(defmethod xref ((object flat-view) &rest subscripts)
+(defmethod xref ((object flat-xview) &rest subscripts)
   (when (cdr subscripts)
     (error 'xref-wrong-number-of-subscripts))
   (let ((index (car subscripts)))
@@ -519,6 +529,6 @@ no error checking.  Return nil for dropped dimensions."
   (:documentation "Map the flat index the subscripts of the ancestor.")
   ;; The purpose of this method is to help with the implementation of
   ;; generic functions that find the subscripts of the largest element, etc.
-  (:method ((object flat-view) index)
+  (:method ((object flat-xview) index)
     (assert (within-dimension-p index (xsize object)))
     (cm-subscripts (ancestor-dimensions object) index)))
