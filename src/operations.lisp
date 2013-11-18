@@ -83,7 +83,7 @@ dimensions,, and the sup|A-B| <= eps.")
 (defun xorder (vector predicate &key key stable-p)
   "Return a vector of integers starting from 0, representing the
 permutation of elements in vector that would result if sorted
-according to predicate (which you can use in slice, etc).  Key is
+according to predicate (which you can use in xslice, etc).  Key is
 passed to sort.  If stable-p, stable-sort is used."
   (bind (((length &rest other-dimensions) (xdims vector))
          (work (make-array length)))
@@ -101,7 +101,7 @@ passed to sort.  If stable-p, stable-sort is used."
   "Sort vector using predicate.  Calls xorder and returns order as the
 second value."
   (let ((order (xorder vector predicate :key key :stable-p stable-p)))
-    (values (as t (slice vector order))
+    (values (as t (xslice vector order))
             order)))
 
 
@@ -208,12 +208,12 @@ for early returns, etc.  See code for variable names."
          (target (xcreate-similar target-spec first dims))
          (mask (make-sequence 'list (xrank first) :initial-element :all)))
     ;; first element
-    (xsetf (apply #'slice target 0 mask)
+    (xsetf (apply #'xslice target 0 mask)
            first)
     ;; rest
     (iter
       (for i :from 1 :below n)
-      (xsetf (apply #'slice target i mask)
+      (xsetf (apply #'xslice target i mask)
              (funcall function)))
     ;; value
     target))

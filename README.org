@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-12 19:19:29 tony>
+Time-stamp: <2013-11-17 13:46:45 tony>
 
 * Using this file
 
@@ -19,6 +19,8 @@ Time-stamp: <2013-11-12 19:19:29 tony>
   ;; emacs-lisp snippet for linking in using this and the in-lined
   ;; commented TODOs of course, still must be written
 #+end_src
+
+
 
 ** TODO [#B] Quick example of using this.
 

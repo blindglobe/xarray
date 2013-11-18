@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-18 09:29:56 tony>
+;;; Time-stamp: <2013-11-18 09:44:48 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -93,7 +93,7 @@
   default unless there is some sensible reason to implement
   otherwise.")
   (:method ((object t) (dim integer))
-    (let ((dim (nth axis-number (xdims object))))
+    (let ((dim (nth dim (xdims object))))
       (if dim dim (error 'xdim-invalid-axis-number)))))
 
 (defgeneric xrank (object)
