@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-12 18:46:42 tony>
+;;; Time-stamp: <2013-11-18 09:29:56 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -8,7 +8,9 @@
 ;;; Copyright:  (c)2009--, AJ Rossini.  Currently licensed under MIT
 ;;;             license.  See file LICENSE.mit in top-level directory
 ;;;             for information.
-;;; Purpose:    describes generics for interface.
+;;;             (c)   --, Tamas Papp.  Contributions licensed under
+;;;             FIXME:(need to check and confirm!
+;;; Purpose:    interface description through generics.
 
 ;;; What is this talk of 'release'? Klingons do not make software
 ;;; 'releases'.  Our software 'escapes', leaving a bloody trail of
@@ -63,6 +65,10 @@
 ;;;; we have that <new object> must consist of elements that are an
 ;;;; appropriate subtype.
 
+;;; Is this truly needed?
+;; (defclass xarray ()
+;;   ((:documentation "mixin class to support dispatch and generics?
+;;          Then we mix in this class if needed.")))
 
 ;;; Generics to use
 
@@ -70,8 +76,9 @@
   (:documentation "Return the type of elements.  If no restriction is
   imposed, return t."))
 
-;;; For accessing dimensions:
-;;; In most cases, you should only implement xdims, the rest will be
+;;; For accessing dimensions and sizes
+
+;;; In most cases, you only need to implement xdims, the rest will be
 ;;; defined in a sane way by generic functions.  The rest only needs
 ;;; to be implemented for efficiency reasons, but this should be a
 ;;; minor concern for most applications.
@@ -86,18 +93,13 @@
   default unless there is some sensible reason to implement
   otherwise.")
   (:method ((object t) (dim integer))
-    (nth dim (xdims object))))
+    (let ((dim (nth axis-number (xdims object))))
+      (if dim dim (error 'xdim-invalid-axis-number)))))
 
 (defgeneric xrank (object)
   (:documentation "Returns the number of dimensions of object.")
   (:method ((object t))
     (length (xdims object))))
-
-(defgeneric xdim (object axis-number)
-  (:documentation "Return the axis-number dimension of object.")
-  (:method ((object t) (axis-number integer))
-    (let ((dim (nth axis-number (xdims object))))
-      (if dim dim (error 'xdim-invalid-axis-number)))))
 
 (defgeneric xsize (object)
   (:documentation "Return the total number of elements in object.")
