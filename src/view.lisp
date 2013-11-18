@@ -125,6 +125,9 @@ needs to follow the chain backwards."
 (defgeneric xslice (object &rest index-specifications)
   (:documentation "Slice of an object."))
 
+(defgeneric (setf xslice) (value object &rest index-specifications)
+  (:documentation "setting a slice of an object."))
+
 ;;;; slice-view
 ;;;;
 ;;;; A general slice, the only assumption is that object is xrefable.

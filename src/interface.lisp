@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-18 09:44:48 tony>
+;;; Time-stamp: <2013-11-18 15:33:10 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -116,17 +116,23 @@
   (:documentation
    "Accesses the element of the object specified by subscripts."))
 
-;;;; xsetf allow to set elements of an xrefable object to those of
-;;;; another.
-;;;;
-;;;; ??? should we lose the function? -- Tamas
-;;;; NO.  -tony
+;;; xsetf allow to set elements of an xrefable object to those of
+;;; another.
+;;;
+;;; ??? should we lose the function? -- Tamas
+;;; NO.  -tony
+;;; 
+;;; Ok, maybe.  The point is that it might be better to set up
+;;; (setf xref) and (setf xslice) so that they work, using views
+;;; rather than mapping functions.
 
 (defgeneric xsetf (destination source &key map-function)
-  (:method (destination source &key 
-	    (map-function
-	     (element-conversion-function (xelttype source)
-					  (xelttype destination))))
+  (:documentation "Copy the elements of source to destination.
+     Map-function, if given, will be used to map the elements, the
+     default is conversion (if necessary) with coerce.")
+  (:method (destination source &key (map-function
+				     (element-conversion-function (xelttype source)
+								  (xelttype destination))))
     (unless (equalp (xdims source) (xdims destination))
       (error "source and destination do not have conforming dimensions"))
     (let ((dimensions (xdims source)))
@@ -142,10 +148,7 @@
 	      (setf (apply #'xref destination subscripts)
 		    (funcall map-function
 			     (apply #'xref source subscripts)))))))
-    destination)
-  (:documentation "Copy the elements of source to destination.
-     Map-function, if given, will be used to map the elements, the
-     default is conversion (if necessary) with coerce."))
+    destination))
 
 ;;;;  An object is characterized by its CLASS (a symbol), various
 ;;;;  class-specific OPTIONS (a list of keyword-value pairs, can be
