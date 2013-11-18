@@ -62,7 +62,7 @@ needs to follow the chain backwards."
 ;;; A general permutation, the only assumption is that object is
 ;;; xrefable.
 
-(defclass permutation-xview (view)
+(defclass permutation-xview (xview)
   ((permutation :initarg :permutation :type fixnum-vector
 		:documentation "permutation")
    (dimensions :initarg :dimensions :reader dimensions :type fixnum-vector
@@ -129,7 +129,7 @@ needs to follow the chain backwards."
 ;;;;
 ;;;; A general slice, the only assumption is that object is xrefable.
 
-(defclass xslice-xview (view)
+(defclass xslice-xview (xview)
   ((index-specifications :initarg :index-specifications
 			 :reader index-specifications
 			 :type fixnum-vector
