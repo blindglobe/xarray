@@ -133,7 +133,7 @@ needs to follow the chain backwards."
   ((index-specifications :initarg :index-specifications
 			 :reader index-specifications
 			 :type fixnum-vector
-			 :documentation "vector of index speficiations")
+			 :documentation "vector of index specifications")
    (dimensions :initarg :dimensions :reader dimensions
 	       :type fixnum-vector
 	       :documentation "dimensions, cached")))
@@ -221,17 +221,17 @@ no error checking.  Return nil for dropped dimensions."
 		       (when d
 			 (collecting d)))))
     (assert (= (length index-specifications) (xrank object)))
-    (make-instance 'slice-view :ancestor object
+    (make-instance 'xslice-xview :ancestor object
 		   :index-specifications index-specifications
 		   :dimensions (coerce dimensions 'fixnum-vector))))
 
-(defmethod xrank ((object slice-view))
+(defmethod xrank ((object xslice-xview))
   (length (dimensions object)))
 
-(defmethod xdims ((object slice-view))
+(defmethod xdims ((object xslice-xview))
   (coerce (dimensions object) 'list))
 
-(defmethod xdim ((object slice-view) axis-number)
+(defmethod xdim ((object xslice-xview) axis-number)
   (aref (dimensions object) axis-number))
 
 (defun convert-slice-subscripts (index-specifications subscripts)

@@ -29,10 +29,12 @@
 
    ;; view
 
-   view original-ancestor permutation permutation-view #|transpose|# slice
-   slice-view drop column-major-projection
-   column-major-projection-view column-major-projection-flat-view flat
-   flat-view
+   xview original-ancestor
+   permutation permutation-xview
+   xslice xslice-xview drop column-major-projection
+   column-major-projection-view column-major-projection-flat-view
+   flat flat-xview
+   #|transpose|#
 
    ;; operations
    
