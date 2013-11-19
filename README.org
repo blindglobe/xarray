@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-19 07:33:41 tony>
+Time-stamp: <2013-11-19 13:50:22 tony>
 
 * Using this file
 
@@ -74,8 +74,8 @@ Time-stamp: <2013-11-19 07:33:41 tony>
   rely on the default situation of CLOS -- it'll tell users which
   structures need xref-able methods, and the users will just have to
   tell us.
-
-** XREF
+** Core
+*** XREF
 
    Access individual elements in an array.
 
@@ -102,7 +102,7 @@ Time-stamp: <2013-11-19 07:33:41 tony>
   (xref object <ref>)
 #+end_src
 
-** XDIMS
+*** XDIMS
    queries dimensions of structure.  There is an open question[fn:1]
    whether an XDIM function should exist.
 
@@ -113,7 +113,7 @@ Time-stamp: <2013-11-19 07:33:41 tony>
   (nth 1 (xdims object))
 #+end_src
 
-** XELTTYPE
+*** XELTTYPE
 
 #+begin_src lisp
    (xelttype object &optional <ref>)
@@ -124,7 +124,7 @@ Time-stamp: <2013-11-19 07:33:41 tony>
    structure.
 
 
-** XCOPY
+*** XCOPY
 
 #+begin_src lisp
    (xcopy object <ref>)
@@ -138,7 +138,7 @@ Time-stamp: <2013-11-19 07:33:41 tony>
    (defmacro xref  (&rest args) (xaccess :type 'reference @args))
    (defmacro xcopy (&rest args) (xaccess :type 'copy      @args))
 #+end_src
-** XNEW
+*** XNEW
 
    creates a new structure.  One could consider using a undefined
    object in order to implement this with setf, i.e. 
@@ -147,11 +147,20 @@ Time-stamp: <2013-11-19 07:33:41 tony>
 #+end_src
    and having it return undef-object with the right value.
 
-** XRANK
-** XSIMILAR
-** XSIZE
-** XCREATE
-** AS*
+
+** Extended
+*** XRANK
+*** XSIMILAR
+*** XSIZE
+*** XCREATE
+*** AS
+    user function for as*
+*** AS*
+    libraries specialize, so write for data store, but user leverages
+    AS or COPY-AS
+*** COPY-AS
+    user function for as*
+*** TAKE
 
 * Approach in general
 
