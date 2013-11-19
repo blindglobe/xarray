@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-17 13:46:45 tony>
+Time-stamp: <2013-11-19 07:33:41 tony>
 
 * Using this file
 
@@ -124,7 +124,6 @@ Time-stamp: <2013-11-17 13:46:45 tony>
    structure.
 
 
-
 ** XCOPY
 
 #+begin_src lisp
@@ -153,7 +152,7 @@ Time-stamp: <2013-11-17 13:46:45 tony>
 ** XSIZE
 ** XCREATE
 ** AS*
-** 
+
 * Approach in general
 
   Both copies and views on an array should be XREF-able.  
