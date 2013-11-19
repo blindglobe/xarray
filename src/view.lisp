@@ -373,7 +373,7 @@ no error checking.  Return nil for dropped dimensions."
 ;;;; storage model, you might want to use a more specialized class if
 ;;;; you are concerned about speed.
 
-(defclass column-major-projection-view (view)
+(defclass column-major-projection-xview (xview)
   ((dimensions :initarg :dimensions :reader dimensions
 	       :type list
 	       :documentation "dimensions")
@@ -382,24 +382,24 @@ no error checking.  Return nil for dropped dimensions."
 			:type list
 			:documentation "dimensions of ancestor")))
 
-(defmethod xrank ((object column-major-projection-view))
+(defmethod xrank ((object column-major-projection-xview))
   (length (dimensions object)))
 
-(defmethod xdims ((object column-major-projection-view))
+(defmethod xdims ((object column-major-projection-xview))
   (copy-list (dimensions object)))
 
-(defmethod xdim ((object column-major-projection-view) axis-number)
+(defmethod xdim ((object column-major-projection-xview) axis-number)
   (nth (dimensions object) axis-number))
 
-(defmethod xsize ((object column-major-projection-view))
+(defmethod xsize ((object column-major-projection-xview))
   (reduce #'* (dimensions object) :initial-value 1))
 
-(defmethod xref ((object column-major-projection-view) &rest subscripts)
+(defmethod xref ((object column-major-projection-xview) &rest subscripts)
   (with-slots (ancestor dimensions ancestor-dimensions) object
     (apply #'xref ancestor (cm-subscripts ancestor-dimensions
 					  (cm-index dimensions subscripts)))))
 
-(defmethod (setf xref) (value (object column-major-projection-view)
+(defmethod (setf xref) (value (object column-major-projection-xview)
 			&rest subscripts)
   (with-slots (ancestor dimensions ancestor-dimensions) object
     (setf (apply #'xref ancestor (cm-subscripts ancestor-dimensions
@@ -411,27 +411,27 @@ no error checking.  Return nil for dropped dimensions."
 ;;;;
 ;;;; A special case projecting onto a flat vector.
 
-(defclass column-major-projection-flat-view (xview)
+(defclass column-major-projection-flat-xview (xview)
   ((xsize :initarg :xsize :reader xsize :type fixnum :documentation "total size")
    (ancestor-dimensions :initarg :ancestor-dimensions
 			:reader ancestor-dimensions
 			:type list
 			:documentation "dimensions of ancestor")))
 
-(defmethod xrank ((object column-major-projection-flat-view))
+(defmethod xrank ((object column-major-projection-flat-xview))
   1)
 
-(defmethod xdims ((object column-major-projection-flat-view))
+(defmethod xdims ((object column-major-projection-flat-xview))
   (list (xsize object)))
 
-(defmethod xdim ((object column-major-projection-flat-view) axis-number)
+(defmethod xdim ((object column-major-projection-flat-xview) axis-number)
   (if (zerop axis-number)
       (xsize object)
       (error 'xdim-invalid-axis-number)))
 
 ;;; xsize is a reader
 
-(defmethod xref ((object column-major-projection-flat-view) &rest subscripts)
+(defmethod xref ((object column-major-projection-flat-xview) &rest subscripts)
   (when (cdr subscripts)
     (error 'xref-wrong-number-of-subscripts))
   (let ((index (car subscripts)))
@@ -439,7 +439,7 @@ no error checking.  Return nil for dropped dimensions."
     (with-slots (ancestor dimensions ancestor-dimensions) object
       (apply #'xref ancestor (cm-subscripts ancestor-dimensions index)))))
 
-(defmethod (setf xref) (value (object column-major-projection-flat-view)
+(defmethod (setf xref) (value (object column-major-projection-flat-xview)
 			&rest subscripts)
   (when (cdr subscripts)
     (error 'xref-wrong-number-of-subscripts))
@@ -459,12 +459,12 @@ no error checking.  Return nil for dropped dimensions."
       (error "Size of the object does not match the product of dimensions."))
     (if (or (null dimensions) (equal dimensions (list xsize)))
         ;; flat
-        (make-instance 'column-major-projection-flat-view 
+        (make-instance 'column-major-projection-flat-xview 
                        :ancestor object
                        :ancestor-dimensions (xdims object)
                        :xsize xsize)
         ;; non-flat
-        (make-instance 'column-major-projection-view 
+        (make-instance 'column-major-projection-xview 
                        :ancestor object
                        :ancestor-dimensions (xdims object)
                        :dimensions dimensions))))
