@@ -1,6 +1,6 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-;;; Time-stamp: <2013-11-22 01:43:01 tony>
+;;; Time-stamp: <2013-11-22 13:48:20 tony>
 ;;; Creation:   
 ;;; File:       template.lisp
 ;;; Author:     Tamas Papp < >
@@ -75,12 +75,14 @@
   (as* 'array object copy-p options))
 
 
-;;; TODO: need to refactor these out elsewhere, into general purpose
-;;; building methods.
-
-;;;;  Convenience functions for vector and array construction.  All
-;;;;  return simple-arrays of the specified type, the versions with *
-;;;;  use numeric-type-classifier.
+;;; Convenience functions for vector and array construction.  All
+;;; return simple-arrays of the specified type, the versions with *
+;;; use numeric-type-classifier.
+;;;
+;;; When we have additional utilities specific to list arrays, they
+;;; should be here.  If these functions are generally useful, they
+;;; should be promoted to generics in the interface.lisp file, and
+;;; these should become methods.
 
 (defun cvector (element-type &rest elements)
   "Return a (simple-array element-type (*)) containing elements,

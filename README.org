@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-22 01:47:20 tony>
+Time-stamp: <2013-11-22 14:22:32 tony>
 
 * Using this file
 
@@ -179,6 +179,21 @@ Time-stamp: <2013-11-22 01:47:20 tony>
 
 *** TAKE
     
+** Utility
+*** CVECTOR
+    returns a simple array of the specified element type, which is
+    vector-ish, filled by contents.
+
+*** CARRAY
+    returns a simple array of the specified element type, which is
+    array-ish (dimensioned), filled by contents.
+
+*** CVECTOR*
+    Same as cvector, but element-type is derived using NUMERIC-TYPE-CLASSIFIER. 
+
+*** CARRAY*
+    Same as carray, but element-type is derived using NUMERIC-TYPE-CLASSIFIER. 
+
 * Approach in general
 
   Both copies and views on an array should be XREF-able.  

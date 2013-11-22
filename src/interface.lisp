@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-20 14:58:01 tony>
+;;; Time-stamp: <2013-11-22 13:36:36 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -155,12 +155,12 @@
 ;;;;  empty, all should have reasonable defaults so that they are
 ;;;;  optional) and the dimensions.
 ;;;;
-;;;;  The XSIMILAR method should return (CONS CLASS OPTIONS) for
-;;;;  creating a "similar" object with given dimensions, where
-;;;;  "similarity" is of course something object specific, and
-;;;;  designed to be a convenient default.  The purpose is to provide
-;;;;  reasonable defaults for XMAP, AS, etc, when called with target
-;;;;  specification T or (cons T OPTIONS).
+;;;;  The XSIMILAR method should return (CONS CLASS OPTIONS) which
+;;;;  provides the parameters for creating a "similar" object with
+;;;;  given dimensions, where "similarity" is of course something
+;;;;  object specific, and designed to be a convenient default.  The
+;;;;  purpose is to provide reasonable defaults for XMAP, AS, etc,
+;;;;  when called with target specification T or (cons T OPTIONS).
 ;;;;
 ;;;;  AS, COPY-AS, and XCREATE are object conversion/creation methods
 ;;;;  that specialize on class, and are also given OPTIONS.  When
@@ -169,16 +169,20 @@
 ;;;;  XCREATE* takes class and options from xsimilar called on the
 ;;;;  first argument, and merges that with the options.
 ;;;;
-;;;;  Dimensions should always be a list.
+;;;;  The class for DIMENSIONS should always be a list.
 ;;;;
 ;;;;  XSIMILAR should always give an object which, when created, has
 ;;;;  all its elements writable.
 
 (defgeneric xsimilar (rank object)
   (:documentation "Return (CONS CLASS OPTIONS) for creating a similar
-  object with new rank.  If rank is T, use rank of object.  NOTE: for
-  methods, make sure you specialize rank to fixnum if you are not
-  handling T.")
+     object with new rank.  If rank is T, use rank of object.  NOTE: for
+     methods, make sure you specialize rank to fixnum if you are not
+     handling T.
+
+     This method needs to be clarified a bit -- it is more about
+     providing meta data for rebuilding, not about determining some
+     notion of equalness.")
   (:method ((rank (eql t)) object)
     (xsimilar (xrank object) object)))
 
