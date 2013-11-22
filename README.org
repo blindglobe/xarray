@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-19 13:50:22 tony>
+Time-stamp: <2013-11-22 01:47:20 tony>
 
 * Using this file
 
@@ -66,14 +66,18 @@ Time-stamp: <2013-11-19 13:50:22 tony>
   for taking a copy of the array into a lisp array (TODO: generalize
   to other array structures).
 
-  Need to construct a registration framework. General design is that
-  xref works out of the box on lisp arrays and list-of-list
-  structures.  Additional matrix packages could depend on xarray and
-  extend the generics (i.e. lisp-matrix) or have patching-packages
-  (think ASDF-SYSTEM-CONNECTIONS) register.  In a sense, we can just
-  rely on the default situation of CLOS -- it'll tell users which
-  structures need xref-able methods, and the users will just have to
-  tell us.
+  General design is that xref works out of the box on lisp arrays and
+  list-of-list structures.  Additional matrix packages could depend on
+  xarray and extend the generics (i.e. lisp-matrix) or have
+  patching-packages (think ASDF-SYSTEM-CONNECTIONS) register.
+
+  In a sense, we just rely on the default situation of CLOS -- it'll
+  tell users which structures need xref-able methods, and the users
+  will just have to tell us.  But that means that XARRAY is their
+  dependency, not that an XARRAY can look forward and load them (which
+  might be worthwhile when using XCREATE or the conversion routines.
+
+* API
 ** Core
 *** XREF
 
@@ -123,7 +127,6 @@ Time-stamp: <2013-11-19 13:50:22 tony>
    returns the substructure, if <ref> is nil, it returns the whole
    structure.
 
-
 *** XCOPY
 
 #+begin_src lisp
@@ -134,34 +137,48 @@ Time-stamp: <2013-11-19 13:50:22 tony>
    between a view and copy, dire consequences could entail, so we use
    separate generic functions for reference and copy, rather than a
    single "xaccess", which could result in:
+
 #+begin_src common-lisp
    (defmacro xref  (&rest args) (xaccess :type 'reference @args))
    (defmacro xcopy (&rest args) (xaccess :type 'copy      @args))
 #+end_src
+
 *** XNEW
 
    creates a new structure.  One could consider using a undefined
    object in order to implement this with setf, i.e. 
+
 #+begin_src common-lisp
    (setf (xref undef-object <refs>) object-with-right-structure)
 #+end_src
-   and having it return undef-object with the right value.
-
+   and having it return undef-object with the right value.  But there
+   are a few other possibilities.
 
 ** Extended
 *** XRANK
 *** XSIMILAR
 *** XSIZE
+    Return the number of elements in the array (product of dimensions,
+    so a zero-dimensional array has size 1).  Should be the analog of
+    ARRAY-TOTAL-SIZE
+
 *** XCREATE
+    Creates a new xref-able object with a particular backing store
+    (ARRAY, or LISTOFLIST, or MATRIX-LIKE, or DATAFRAME-LIKE).
+
+*** AS*
+    libraries specialize, so write for data store.
+
+    Users should leverage AS or COPY-AS
+
 *** AS
     user function for as*
-*** AS*
-    libraries specialize, so write for data store, but user leverages
-    AS or COPY-AS
-*** COPY-AS
-    user function for as*
-*** TAKE
 
+*** COPY-AS
+    user function for as* which makes a deep copy
+
+*** TAKE
+    
 * Approach in general
 
   Both copies and views on an array should be XREF-able.  
@@ -302,7 +319,6 @@ Time-stamp: <2013-11-19 13:50:22 tony>
 #+end_src
 
 * Discussion
-
 
 * Footnotes
 
