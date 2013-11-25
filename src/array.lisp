@@ -1,14 +1,14 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-;;; Time-stamp: <2013-11-22 13:48:20 tony>
+;;; Time-stamp: <2013-11-22 14:41:55 tony>
 ;;; Creation:   
-;;; File:       template.lisp
+;;; File:       array.lisp
 ;;; Author:     Tamas Papp < >
 ;;; Maintainer: AJ Rossini <blindglobe@gmail.com>
 ;;; Copyright:  (c)2012--, AJ Rossini.  Currently licensed under MIT
 ;;;             license.  See file LICENSE.mit in top-level directory
 ;;;             for information.
-;;; Purpose:    Template header file
+;;; Purpose:    Implementation of the xarray API for lisp arrays. 
 
 ;;; What is this talk of 'release'? Klingons do not make software
 ;;; 'releases'.  Our software 'escapes', leaving a bloody trail of

@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-22 13:36:36 tony>
+;;; Time-stamp: <2013-11-22 14:43:29 tony>
 ;;; Creation:   
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -248,5 +248,6 @@ interface is AS or COPY-AS.")
   (as* class object nil options))
 
 (defun copy-as (class object &rest options)
-  "makes a copy."
+  "Convert OBJECT to CLASS as a deep copy, with the enforcement of no
+shared structure."
   (as* class object t options))
