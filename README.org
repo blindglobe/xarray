@@ -1,5 +1,5 @@
 
-Time-stamp: <2013-11-22 14:22:32 tony>
+Time-stamp: <2013-11-22 15:08:00 tony>
 
 * Using this file
 
@@ -180,6 +180,7 @@ Time-stamp: <2013-11-22 14:22:32 tony>
 *** TAKE
     
 ** Utility
+   these are currently related to arrays.
 *** CVECTOR
     returns a simple array of the specified element type, which is
     vector-ish, filled by contents.
@@ -198,23 +199,57 @@ Time-stamp: <2013-11-22 14:22:32 tony>
 
   Both copies and views on an array should be XREF-able.  
 
-  Example: For an two-dimensional array *a*,
+  Array and vector construction for LISP ARRAYS (the default and base storage class) are shown as follows: 
+
+#+BEGIN_SRC lisp
+  (defparameter *b* (xarray:cvector* (list 0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0)))
+  ,*b* ;; this is an array of 1 item, a list of 8 floats
+  
+  (defparameter *c* (xarray:cvector* 0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0))
+  ,*c* ;; this is an array of 8 items, each a float
+  
+  (defparameter *a* (xarray:carray* (list 2 4)
+                                    0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0))
+  ,*a*
+  
+  
+  
+  (defparameter *d* (xarray:cvector 'double-float 0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0))
+  ,*d* ;; this is an array of 1 item, a list of 8 floats
+  
+  (defparameter *e* (xarray:cvector 'fixnum 0 1 2 3 4 5 6 7))
+  ,*e* ;; this is an array of 8 items, each a float
+  
+  (defparameter *f* (xarray:carray 'fixnum (list 2 4)
+                                    0 1 2 3 4 5 6 7))
+  ,*f*
+  
+  (defparameter *g* (xarray:carray 'double-float (list 2 4)
+                                    0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0))
+  *g*
+#+END_SRC
+
+  This can be sliced and dices in a number of ways, 
 
 #+begin_src common-lisp
-  (slice *a* :all 4)
+  (xarray:xslice *a* :all 2)  ; third column
+  (xarray:xslice *a* 0 :all) ; first row
 #+end_src
 
-  selects the 4th column of an array.[fn:2] This view is also xrefable,
-  so you can use
+  selects the 3th column of an array.[fn:2] , and then the first row.
+  This view is also xrefable, so you can use
 
 #+begin_src common-lisp
-  (setf (xref (slice *a* :all 4) 2) 9)
+  (setf (xarray:xref (xarray:xslice *a* :all 2) 1) 9.0)
 #+end_src
 
-  to set element 2 to 9.  Changes will be made in the original array
+  to set element 2 in the 3rd column, which has value 6, to the
+  value 9.  Changes will be made in the original array
+
 #+begin_src common-lisp
   *a*
 #+end_src
+
   since this is a view.  But for functions that just expect an array,
   they can use the interface (xref, xdims, etc) and not care where it
   is coming from.
@@ -222,11 +257,13 @@ Time-stamp: <2013-11-22 14:22:32 tony>
   I have also implemented permutations (generalized transpose), and
   row-major projections.  If you want to collect the elements of a
   view in an array ("deep copy"), use
+
 #+begin_src common-lisp
-  (copy-as object)
+  (copy-as *a*)
+  (copy-as (xarray:xslice *a* :all 2))
 #+end_src
 
-  which delivers a CL array.  
+  which delivers a CL array of the original and then sliced xrefable object.  
 
   There are convenience functions that for easy array/vector creation,
   inspired by R:
