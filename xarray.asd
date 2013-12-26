@@ -3,7 +3,8 @@
 
 (in-package #:xarray-asd)
 
-(defparameter *fasl-directory*
+#|
+ (defparameter *fasl-directory*
   (make-pathname :directory '(:relative
 			      #+sbcl "fasl-sbcl"
 			      #+openmcl "fasl-ccl"
@@ -11,6 +12,7 @@
 			      #+clisp "fasl-clisp"
 			      #-(or sbcl openmcl clisp cmucl) "fasl"
 			      )))
+|#
 
 (defsystem #:xarray
   :description "" 
