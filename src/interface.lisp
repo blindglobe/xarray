@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-12-26 14:44:50 tony>
+;;; Time-stamp: <2013-12-26 18:28:51 tony>
 ;;; Creation:   ??
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -86,7 +86,7 @@
 
   We do not throw an error for this not being specified - it is only
   specified FOR restrictions, not when there are no restrictions.")
-  (:method ((object xarray-like)) T))
+  (:method ((object xarray-like) &keyword list-of-rows list-of-columns) T))
 
 ;;; For accessing dimensions and sizes
 
@@ -121,7 +121,8 @@
 
 (defgeneric xsize (object)
   (:documentation "Return the total number of elements in object.")
-  (:method (object xarray-like) (reduce #'* (xdims object) :initial-value 1)))
+  ;; (:method ((object t)) (reduce #'* (xdims object) :initial-value 1))
+  (:method ((object xarray-like)) (reduce #'* (xdims object) :initial-value 1)))
 
 ;;;; Accessors for elements.  (setf xref) can signal an error for
 ;;;; read-only elements, or does not need to be defined at all.
@@ -129,7 +130,7 @@
 (defgeneric xref (object &rest subscripts)
   (:documentation
    "Accesses the element of the object specified by subscripts.")
-  (:method ((object xarray-like)) 
+  (:method ((object xarray-like) &rest subscripts) 
     (error "Need to implement XREF for type %s" (type-of object))))
 
 (defgeneric (setf xref) (value object &rest subscripts)

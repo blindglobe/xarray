@@ -21,7 +21,7 @@
           :documentation "first integer"))
   (:documentation "A sequence of integers."))
 
-(defmethod xelttype ((seq int-seq))
+(defmethod xelttype ((seq int-seq) &keyword list-of-rows list-of-columns)
   'integer)
 
 (defmethod xref ((seq int-seq) &rest subscripts)

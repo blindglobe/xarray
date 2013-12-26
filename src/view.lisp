@@ -26,8 +26,10 @@
 
 ;; xarray API 
 
-(defmethod xelttype ((object xview))
-  (xelttype (ancestor object)))
+(defmethod xelttype ((object xview) &keyword list-of-rows list-of-columns)
+  (xelttype (ancestor object)
+	    :list-of-rows list-of-rows
+	    :list-of-columns list-of-columns))
 
 (defmethod xsimilar (rank (object xview))
   (xsimilar rank (ancestor object)))
