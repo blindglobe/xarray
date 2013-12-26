@@ -1,7 +1,7 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-11-22 14:43:29 tony>
-;;; Creation:   
+;;; Time-stamp: <2013-12-26 14:44:50 tony>
+;;; Creation:   ??
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
 ;;; Maintainer: AJ Rossini <blindglobe@gmail.com>
@@ -9,7 +9,7 @@
 ;;;             license.  See file LICENSE.mit in top-level directory
 ;;;             for information.
 ;;;             (c)   --, Tamas Papp.  Contributions licensed under
-;;;             FIXME:(need to check and confirm!
+;;;             FIXME: need to check and confirm!
 ;;; Purpose:    interface description through generics.
 
 ;;; What is this talk of 'release'? Klingons do not make software
@@ -65,16 +65,28 @@
 ;;;; we have that <new object> must consist of elements that are an
 ;;;; appropriate subtype.
 
-;;; Is this truly needed?
-;; (defclass xarray ()
-;;   ((:documentation "mixin class to support dispatch and generics?
-;;          Then we mix in this class if needed.")))
+;;; Mixin the following virtual superclass to ensure that we can use any default methods.  
+(defclass xarray-like ()
+  ()
+  (:documentation "mixin virtual superclass to indicate support for
+  dispatch and generics.  There should be no objects instantiated with
+  this class."))
 
 ;;; Generics to use
 
-(defgeneric xelttype (object)
+(defgeneric xelttype (object &keyword list-of-rows list-of-columns)
   (:documentation "Return the type of elements.  If no restriction is
-  imposed, return t."))
+  imposed, return T.  By default, T is expected, numerically-oriented
+  matrices being the exception and hence different.  
+
+  If there is :list-of-rows or :list-of-columns specified, then return
+  a list with the types for the rows or columns, respectively.  These
+  would be a repeated list of the same type in the case of a numerical
+  single-typed matrix.
+
+  We do not throw an error for this not being specified - it is only
+  specified FOR restrictions, not when there are no restrictions.")
+  (:method ((object xarray-like)) T))
 
 ;;; For accessing dimensions and sizes
 
@@ -86,31 +98,39 @@
 (defgeneric xdims (object)
   (:documentation "Return a list of dimensions of object.  The list
   does not share structure with anything, so it can be freely
-  modified."))
+  modified.")
+  (:method ((object xarray-like)) 
+    (error "Need to implement XDIMS for type %s" (type-of object))))
+
+;; The following (xdim, xrank, xsize) use XDIMS by default, but could use optimized
+;; dispatches if such exist for a particular table-like data
+;; structure.
 
 (defgeneric xdim (object dim)
   (:documentation "Return the size of the dim-th dim.  We use the
   default unless there is some sensible reason to implement
   otherwise.")
-  (:method ((object t) (dim integer))
+  (:method ((object xarray-like) (dim integer))
     (let ((dim (nth dim (xdims object))))
       (if dim dim (error 'xdim-invalid-axis-number)))))
 
 (defgeneric xrank (object)
   (:documentation "Returns the number of dimensions of object.")
-  (:method ((object t))
+  (:method ((object xarray-like))
     (length (xdims object))))
 
 (defgeneric xsize (object)
   (:documentation "Return the total number of elements in object.")
-  (:method (object) (reduce #'* (xdims object) :initial-value 1)))
+  (:method (object xarray-like) (reduce #'* (xdims object) :initial-value 1)))
 
 ;;;; Accessors for elements.  (setf xref) can signal an error for
 ;;;; read-only elements, or does not need to be defined at all.
 
 (defgeneric xref (object &rest subscripts)
   (:documentation
-   "Accesses the element of the object specified by subscripts."))
+   "Accesses the element of the object specified by subscripts.")
+  (:method ((object xarray-like)) 
+    (error "Need to implement XREF for type %s" (type-of object))))
 
 (defgeneric (setf xref) (value object &rest subscripts)
   (:documentation
@@ -124,7 +144,10 @@
 ;;; 
 ;;; Ok, maybe.  The point is that it might be better to set up
 ;;; (setf xref) and (setf xslice) so that they work, using views
-;;; rather than mapping functions.
+;;; rather than mapping functions.  
+;;;
+;;; It is also nice to be able to do either (mapping, or view-setting
+;;; with an isomorphic structure.
 
 (defgeneric xsetf (destination source &key map-function)
   (:documentation "Copy the elements of source to destination.
@@ -184,7 +207,9 @@
      providing meta data for rebuilding, not about determining some
      notion of equalness.")
   (:method ((rank (eql t)) object)
-    (xsimilar (xrank object) object)))
+    (xsimilar (xrank object) object))
+  (:method (rank (object xarray-like))
+    (xsimilar (xrank object) object)) )
 
 (defgeneric xcreate (class dimensions &optional options)
   (:documentation "Return a new object of given type and dimensions,
