@@ -1,12 +1,11 @@
 
-Time-stamp: <2013-11-22 15:08:00 tony>
+Time-stamp: <2013-12-26 14:12:48 tony>
 
 * Using this file
 
   This README file is intended to be read by humans as well as
   processed by Emacs org-mode for publishing, for literate-programming
   of examples, for bug-tracking and task/issue management, etc.
-
 
 ** TODO [#A] Write up basic setup for using this file from org-mode
    - State "TODO"       from ""           [2010-06-07 Mon 16:18]
@@ -15,11 +14,14 @@ Time-stamp: <2013-11-22 15:08:00 tony>
    to include incantation for this to do the right thing for the
    agenda view!
 
+   Right now there are issues with common-lisp support from within
+   babel within org-mode. The configuration is not clear right out of
+   the box and requires a bit of work to get working.
+
 #+begin_src lisp
   ;; emacs-lisp snippet for linking in using this and the in-lined
   ;; commented TODOs of course, still must be written
 #+end_src
-
 
 
 ** TODO [#B] Quick example of using this.
@@ -31,14 +33,14 @@ Time-stamp: <2013-11-22 15:08:00 tony>
 
 ** Quick Start
 
-   If using ASDF, something like:
+*** ASDF only, OBSOLETE!
 
 #+begin_src lisp
   (asdf:oos 'asdf:load-op :xarray)
   (asdf:oos 'asdf:compile-op :xarray :force T)
 #+end_src
 
-   or if using Quicklisp, something like:
+*** QUICKLISP
 
 #+begin_src lisp
   (ql:quickload :xarray)
@@ -57,14 +59,18 @@ Time-stamp: <2013-11-22 15:08:00 tony>
   This package implements a generalized interface for array-like
   objects.  An array-like object is any structure whose data (but not
   necessarily metadata) could be simply mappable to either a lisp
-  array or a list-of-list structure.  The idea is that we should be
-  able to index an object's data, but might not be able to access
-  specialized metadata.  We provide a means of having views into
-  convienently indexable rectangular substructures, which are
-  view-by-reference, not copies, (TODO: need to create indexing tools
-  for pulling various combinations out).  In addition, there is a tool
-  for taking a copy of the array into a lisp array (TODO: generalize
-  to other array structures).
+  array or a list-of-list structure.
+
+  This could be interpreted in that this forms either a rectangular or
+  ragged-array (differential lengths of EITHER rows OR columns).  
+
+  The idea is that we should be able to index an object's data, but
+  might not be able to access specialized metadata.  We provide a
+  means of having views into convienently indexable rectangular
+  substructures, which are view-by-reference, not copies, (TODO: need
+  to create indexing tools for pulling various combinations out).  In
+  addition, there is a tool for taking a copy of the array into a lisp
+  array (TODO: generalize to other array structures).
 
   General design is that xref works out of the box on lisp arrays and
   list-of-list structures.  Additional matrix packages could depend on
@@ -78,6 +84,40 @@ Time-stamp: <2013-11-22 15:08:00 tony>
   might be worthwhile when using XCREATE or the conversion routines.
 
 * API
+
+** interface.lisp
+
+(defgeneric xelttype (object)
+(defgeneric xdims (object)
+(defgeneric xdim (object dim)
+(defgeneric xrank (object)
+(defgeneric xsize (object)
+(defgeneric xref (object &rest subscripts)
+(defgeneric (setf xref) (value object &rest subscripts)
+(defgeneric xsetf (destination source &key map-function)
+(defgeneric xsimilar (rank object)
+(defgeneric xcreate (class dimensions &optional options)
+(defgeneric as* (class object copy-p options)
+
+** operations.lisp
+
+operations.lisp:29:  `(defgeneric ,name (a b &key &allow-other-keys)
+operations.lisp:69:(defgeneric x= (a b &optional eps)
+operations.lisp:117:  `(defgeneric ,name (a)
+operations.lisp:221:(defgeneric xdot (a b)
+
+** view.lisp
+
+(defgeneric permutation (object &rest permutation)
+(defgeneric transpose (object)
+(defgeneric xslice (object &rest index-specifications)
+(defgeneric (setf xslice) (value object &rest index-specifications)
+; (defgeneric row-major-projection (object &rest dimensions)
+(defgeneric column-major-projection (object &rest dimensions)
+(defgeneric flat (object)
+(defgeneric ancestor-subscripts (object index)
+
+
 ** Core
 *** XREF
 
