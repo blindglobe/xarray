@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-12-26 18:28:51 tony>
+;;; Time-stamp: <2014-01-13 08:42:33 tony>
 ;;; Creation:   ??
 ;;; File:       interface.lisp
 ;;; Author:     Tamas Papp
@@ -74,7 +74,7 @@
 
 ;;; Generics to use
 
-(defgeneric xelttype (object &keyword list-of-rows list-of-columns)
+(defgeneric xelttype (object &key list-of-rows list-of-columns)
   (:documentation "Return the type of elements.  If no restriction is
   imposed, return T.  By default, T is expected, numerically-oriented
   matrices being the exception and hence different.  
@@ -86,7 +86,7 @@
 
   We do not throw an error for this not being specified - it is only
   specified FOR restrictions, not when there are no restrictions.")
-  (:method ((object xarray-like) &keyword list-of-rows list-of-columns) T))
+  (:method ((object xarray-like) &key list-of-rows list-of-columns) T))
 
 ;;; For accessing dimensions and sizes
 

@@ -26,7 +26,7 @@
 
 ;; xarray API 
 
-(defmethod xelttype ((object xview) &keyword list-of-rows list-of-columns)
+(defmethod xelttype ((object xview) &key list-of-rows list-of-columns)
   (xelttype (ancestor object)
 	    :list-of-rows list-of-rows
 	    :list-of-columns list-of-columns))

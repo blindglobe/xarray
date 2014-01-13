@@ -1,6 +1,6 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Coding:utf-8 -*-
 
-;;; Time-stamp: <2013-12-26 17:48:43 tony>
+;;; Time-stamp: <2014-01-13 08:44:59 tony>
 ;;; Creation:   ??
 ;;; File:       array.lisp
 ;;; Author:     Tamas Papp < >
@@ -20,7 +20,7 @@
 ;;;;  xrefable objects.  The interface maps to CL functions in a
 ;;;;  straightforward manner.
 
-(defmethod xelttype ((object array) &keyword list-of-rows list-of-columns)
+(defmethod xelttype ((object array) &key list-of-rows list-of-columns)
   (array-element-type object))
 
 (defmethod xrank ((object array))

@@ -1,6 +1,6 @@
 ;;; -*- mode: lisp -*-
 
-;;; Time-stamp: <2013-12-26 17:47:39 tony>
+;;; Time-stamp: <2014-01-13 08:42:15 tony>
 ;;; Creation:   
 ;;; File:       atoms.lisp
 ;;; Author:     Tamas Papp
@@ -20,7 +20,7 @@
 ;;;;  are xref'able as an array of rank 0, similarly to CL's way of
 ;;;;  handling arrays like this.
 
-(defmethod xelttype ((object t) &keyword list-of-rows list-of-columns)
+(defmethod xelttype ((object t) &key list-of-rows list-of-columns)
   (type-of object))
 
 (defmethod xdims ((object t))
